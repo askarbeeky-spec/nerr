@@ -1,0 +1,36 @@
+services:
+  freeradius:
+    build: ./freeradius
+    container_name: radius-server
+    restart: always
+    ports:
+      - "0.0.0.0:1813:1813/udp"
+    # НЕТ маппинга 1812 — его принимает haproxy/udp-proxy напрямую
+
+    # Правильный stateful UDP proxy для RADIUS
+    # Отличие от socat: HAProxy корректно обрабатывает UDP src port для каждого клиента
+  udp-proxy:
+    image: haproxy:alpine
+    container_name: radius-udp-proxy
+    restart: always
+    ports:
+      - "0.0.0.0:1812:1812/udp"
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    depends_on:
+      - freeradius
+
+  admin-web:
+    build: ./admin
+    container_name: radius-admin
+    restart: always
+    ports:
+      - "8090:8080"
+    environment:
+      DB_HOST: ${DB_HOST:-host.docker.internal}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-skybeer_wifi}
+      DB_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-07042005}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

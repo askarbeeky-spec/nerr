@@ -1,0 +1,42 @@
+services:
+  freeradius:
+    build: ./freeradius
+    container_name: radius-server
+    restart: always
+    # Пробрасываем оба порта напрямую на хост
+    # Docker Desktop на Windows имеет проблему с UDP response routing —
+    # решается через listen на 0.0.0.0 внутри контейнера
+    ports:
+      - "0.0.0.0:1812:1812/udp"
+      - "0.0.0.0:1813:1813/udp"
+    environment:
+      DB_HOST: ${DB_HOST:-host.docker.internal}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-skybeer_wifi}
+      DB_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-07042005}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # КРИТИЧНО для Windows Docker Desktop UDP:
+    # sysctls позволяют корректно обрабатывать UDP src port preservation
+    sysctls:
+      - net.ipv4.conf.all.rp_filter=0
+      - net.ipv4.conf.default.rp_filter=0
+
+  # udp-relay УБРАН — socat не поддерживает корректный UDP full-cone NAT
+  # для RADIUS (разные ephemeral src порты на каждый пакет)
+
+  admin-web:
+    build: ./admin
+    container_name: radius-admin
+    restart: always
+    ports:
+      - "8090:8080"
+    environment:
+      DB_HOST: ${DB_HOST:-host.docker.internal}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-skybeer_wifi}
+      DB_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-07042005}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

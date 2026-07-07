@@ -1,0 +1,52 @@
+server default {
+    listen {
+        type = auth
+        ipaddr = *
+        port = 1812
+    }
+    listen {
+        type = acct
+        ipaddr = *
+        port = 1813
+    }
+
+    authorize {
+        filter_username
+        preprocess
+        rewrite_called_station_id
+
+        # Проверяем MAC в БД (radcheck)
+        # Если MAC есть → Auth-Type из БД
+        # Если MAC нет → FreeRADIUS вернёт Access-Reject автоматически
+        sql
+
+        # Если SQL не нашёл пользователя — reject
+        if (notfound) {
+            update reply {
+                Reply-Message := "Not paid. Please visit payment page."
+            }
+            reject
+        }
+    }
+
+    authenticate {
+        Auth-Type Accept {
+            ok
+        }
+    }
+
+    accounting {
+        detail
+        sql
+    }
+
+    post-auth {
+        # Логируем результат аутентификации в БД
+        sql
+
+        Post-Auth-Type REJECT {
+            attr_filter.access_reject
+            sql
+        }
+    }
+}

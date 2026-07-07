@@ -1,0 +1,80 @@
+# Default virtual server — MAC-авторизация (MVP с fallback)
+server default {
+    listen {
+        type = auth
+        ipaddr = *
+        port = 1812
+    }
+    listen {
+        type = acct
+        ipaddr = *
+        port = 1812
+    }
+
+    authorize {
+        # Предобработка
+        filter_username
+        preprocess
+
+        # Нормализуем MAC-адрес
+        rewrite_called_station_id
+
+        # Пытаемся найти MAC в БД, но НЕ падаем если БД недоступна
+        # Знак "-" перед sql = игнорировать ошибку модуля
+        -sql
+
+        # Независимо от SQL — если пользователь не аутентифицирован,
+        # принимаем всех (логика Hotspot: пускаем, но без интернета)
+        if (!ok && !updated && !notfound) {
+            # SQL вернул ошибку (БД недоступна) — всё равно отвечаем
+            update control {
+                Auth-Type := Accept
+            }
+        }
+
+        if (notfound) {
+            # MAC не найден в БД — новый пользователь, пускаем на портал
+            update control {
+                Auth-Type := Accept
+            }
+        }
+
+        pap
+        chap
+        mschap
+    }
+
+    authenticate {
+        Auth-Type PAP {
+            pap
+        }
+        Auth-Type CHAP {
+            chap
+        }
+        Auth-Type MS-CHAP {
+            mschap
+        }
+        Auth-Type Accept {
+            ok
+        }
+    }
+
+    accounting {
+        detail
+        # SQL accounting — мягкий режим (не падать если БД недоступна)
+        -sql
+    }
+
+    session {
+        -sql
+    }
+
+    post-auth {
+        # Логируем в БД мягко
+        -sql
+
+        Post-Auth-Type REJECT {
+            attr_filter.access_reject
+        }
+    }
+}

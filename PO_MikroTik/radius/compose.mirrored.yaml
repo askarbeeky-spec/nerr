@@ -1,0 +1,28 @@
+services:
+  freeradius:
+    build: ./freeradius
+    container_name: radius-server
+    restart: always
+    # network_mode: host — контейнер использует сеть Windows напрямую
+    # FreeRADIUS слушает на реальном IP 192.168.88.254:1812
+    # MikroTik получает ответ на свой оригинальный src port — NAT исчезает
+    network_mode: host
+    environment:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-skybeer_wifi}
+      DB_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-07042005}
+
+  admin-web:
+    build: ./admin
+    container_name: radius-admin
+    restart: always
+    # admin тоже на host network — доступен на порту 8090 напрямую
+    network_mode: host
+    environment:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-skybeer_wifi}
+      DB_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-07042005}

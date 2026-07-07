@@ -1,0 +1,124 @@
+sql {
+    driver = "rlm_sql_postgresql"
+    dialect = "postgresql"
+
+    # В Windows Docker Desktop host.docker.internal — это ваш основной ПК
+    # База данных работает на 5432 на хосте
+    server = "host.docker.internal"
+    port = "5432"
+    login = "postgres"
+    password = "07042005"
+    radius_db = "skybeer_wifi"
+
+    # Настройки таймаутов
+    connect_failure_retry_delay = 3
+    max_queries = 0
+
+    pool {
+        start = 0
+        min = 0
+        max = 5
+        spare = 2
+        uses = 0
+        retry_delay = 1
+        lifetime = 0
+        idle_timeout = 60
+    }
+
+    # ============================================================
+    # MAC-авторизация — КРИТИЧНО:
+    # 1. LOWER() чтобы регистр не мешал (MikroTik шлёт AA:BB:..., мы пишем aa:bb:...)
+    # 2. Проверяем НЕ ТОЛЬКО radcheck, но и что сессия не истекла в billing_sessions
+    # ============================================================
+
+    # authorize_check_query: ищем MAC в radcheck (case-insensitive)
+    # Логика простая: если MAC есть → Accept. Если нет → Reject.
+    # Удаление из radcheck при истечении/отзыве делает Python API (cleanup task).
+    authorize_check_query = "\
+        SELECT id, username, attribute, value, op \
+        FROM radcheck \
+        WHERE LOWER(username) = LOWER('%{User-Name}') \
+        LIMIT 1"
+
+    # authorize_reply_query: динамически считаем Session-Timeout из billing_sessions
+    # Благодаря этому MikroTik знает точно когда разорвать сессию
+    authorize_reply_query = "\
+        SELECT id, username, attribute, value, op FROM radreply \
+        WHERE LOWER(username) = LOWER('%{User-Name}') \
+        UNION ALL \
+        SELECT 999 as id, LOWER('%{User-Name}') as username, \
+               'Session-Timeout' as attribute, \
+               FLOOR(EXTRACT(EPOCH FROM (expires_at - NOW())))::text as value, \
+               ':=' as op \
+        FROM billing_sessions \
+        WHERE LOWER(mac_address) = LOWER('%{User-Name}') \
+        AND status = 'active' AND expires_at > NOW() \
+        ORDER BY id LIMIT 1"
+
+    # Групповые атрибуты (скорости)
+    group_membership_query = "\
+        SELECT groupname FROM radusergroup \
+        WHERE LOWER(username) = LOWER('%{User-Name}') \
+        ORDER BY priority"
+
+    authorize_group_check_query = "\
+        SELECT id, groupname, attribute, value, op FROM radgroupcheck WHERE groupname = '%{Sql-Group}'"
+
+    authorize_group_reply_query = "\
+        SELECT id, groupname, attribute, value, op FROM radgroupreply WHERE groupname = '%{Sql-Group}'"
+
+    # ============================================================
+    # Accounting (учёт трафика) — обязательно в продакшене
+    # ============================================================
+    accounting_on = "\
+        UPDATE radacct \
+        SET acctstoptime = NOW(), acctterminatecause = 'NAS-Reboot' \
+        WHERE nasipaddress = '%{NAS-IP-Address}' AND acctstoptime IS NULL"
+
+    accounting_off = "\
+        UPDATE radacct \
+        SET acctstoptime = NOW(), acctterminatecause = 'NAS-Reboot' \
+        WHERE nasipaddress = '%{NAS-IP-Address}' AND acctstoptime IS NULL"
+
+    accounting_start_query = "\
+        INSERT INTO radacct \
+            (acctsessionid, acctuniqueid, username, realm, nasipaddress, \
+             nasportid, nasporttype, acctstarttime, acctauthentic, \
+             connectinfo_start, calledstationid, callingstationid, \
+             servicetype, framedprotocol, framedipaddress) \
+        VALUES \
+            ('%{Acct-Session-Id}', '%{Acct-Unique-Session-Id}', \
+             LOWER('%{User-Name}'), '%{Realm}', '%{NAS-IP-Address}', \
+             '%{NAS-Port}', '%{NAS-Port-Type}', NOW(), '%{Acct-Authentic}', \
+             '%{Connect-Info}', '%{Called-Station-Id}', '%{Calling-Station-Id}', \
+             '%{Service-Type}', '%{Framed-Protocol}', '%{Framed-IP-Address}') \
+        ON CONFLICT (acctuniqueid) DO NOTHING"
+
+    accounting_update_query = "\
+        UPDATE radacct \
+        SET acctsessiontime = %{Acct-Session-Time}, \
+            acctinputoctets = (('%{Acct-Input-Gigawords:-0}'::bigint << 32) + '%{Acct-Input-Octets:-0}'::bigint), \
+            acctoutputoctets = (('%{Acct-Output-Gigawords:-0}'::bigint << 32) + '%{Acct-Output-Octets:-0}'::bigint), \
+            framedipaddress = '%{Framed-IP-Address}', \
+            acctupdatetime = NOW() \
+        WHERE acctuniqueid = '%{Acct-Unique-Session-Id}'"
+
+    accounting_stop_query = "\
+        UPDATE radacct \
+        SET acctstoptime = NOW(), \
+            acctsessiontime = %{Acct-Session-Time}, \
+            acctinputoctets = (('%{Acct-Input-Gigawords:-0}'::bigint << 32) + '%{Acct-Input-Octets:-0}'::bigint), \
+            acctoutputoctets = (('%{Acct-Output-Gigawords:-0}'::bigint << 32) + '%{Acct-Output-Octets:-0}'::bigint), \
+            acctterminatecause = '%{Acct-Terminate-Cause}' \
+        WHERE acctuniqueid = '%{Acct-Unique-Session-Id}'"
+
+    postauth_query = "\
+        INSERT INTO radpostauth \
+            (username, pass, reply, authdate, nasipaddress, nasportid, \
+             calledstationid, callingstationid, framedipaddress) \
+        VALUES \
+            (LOWER('%{User-Name}'), '%{User-Password:-CHAP}', '%{reply:Packet-Type}', \
+             NOW(), '%{NAS-IP-Address}', '%{NAS-Port-Id}', \
+             '%{Called-Station-Id}', '%{Calling-Station-Id}', '%{Framed-IP-Address}') \
+        ON CONFLICT DO NOTHING"
+}

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="SKY Internet - Мгновенный доступ к Wi-Fi без регистрации. Выберите тариф, оплатите и пользуйтесь интернетом прямо сейчас!">
+    <meta name="keywords" content="SKY Internet, Wi-Fi, интернет, captive portal, без пароля, Кыргызстан">
+    <meta name="theme-color" content="#667eea">
+    <title>SKY Internet - Добро пожаловать! 🌐</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Background Animation -->
+    <div class="background-animation">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <circle cx="20" cy="20" r="18" stroke="url(#gradient)" stroke-width="4" />
+                    <path d="M20 8L26 20L20 32L14 20L20 8Z" fill="url(#gradient)" />
+                    <defs>
+                        <linearGradient id="gradient" x1="0" y1="0" x2="40" y2="40">
+                            <stop offset="0%" style="stop-color:#667eea" />
+                            <stop offset="100%" style="stop-color:#764ba2" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span>SKY Internet</span>
+            </div>
+            <div class="wifi-status">
+                <div class="wifi-icon">
+                    <span class="wifi-wave"></span>
+                    <span class="wifi-wave"></span>
+                    <span class="wifi-wave"></span>
+                </div>
+                <span class="status-text">Подключено</span>
+            </div>
+        </header>
+
+        <!-- Welcome Section -->
+        <section class="welcome-section" id="welcomeSection">
+            <div class="welcome-content">
+                <h1 class="welcome-title">
+                    Привет! 👋
+                </h1>
+                <p class="welcome-subtitle">
+                    Вы подключены к <strong>SKY Internet</strong>
+                </p>
+                <p class="welcome-description">
+                    Выберите готовый тариф или настройте свой - получите мгновенный доступ в интернет без регистрации и
+                    паролей
+                </p>
+            </div>
+        </section>
+
+        <!-- Tariffs Section -->
+        <section class="tariffs-section">
+            <h2 class="section-title">Выберите тариф</h2>
+
+            <div class="tariffs-grid">
+                <!-- Tariff 1: Hour -->
+                <div class="tariff-card" data-tariff="hour" data-price="50" data-duration="60">
+                    <div class="tariff-badge">Быстрый доступ</div>
+                    <div class="tariff-icon">⚡</div>
+                    <h3 class="tariff-name">1 Час</h3>
+                    <div class="tariff-price">
+                        <span class="price-amount">50</span>
+                        <span class="price-currency">сом</span>
+                    </div>
+                    <ul class="tariff-features">
+                        <li>✓ Безлимитный трафик</li>
+                        <li>✓ Скорость до 50 Мбит/с</li>
+                        <li>✓ Без регистрации</li>
+                    </ul>
+                    <button class="tariff-button">Выбрать</button>
+                </div>
+
+                <!-- Tariff 2: Day (Popular) -->
+                <div class="tariff-card popular" data-tariff="day" data-price="150" data-duration="1440">
+                    <div class="tariff-badge popular-badge">Популярный</div>
+                    <div class="tariff-icon">🔥</div>
+                    <h3 class="tariff-name">Сутки</h3>
+                    <div class="tariff-price">
+                        <span class="price-amount">150</span>
+                        <span class="price-currency">сом</span>
+                    </div>
+                    <ul class="tariff-features">
+                        <li>✓ Безлимитный трафик</li>
+                        <li>✓ Скорость до 100 Мбит/с</li>
+                        <li>✓ Приоритет в сети</li>
+                        <li>✓ Экономия 70%</li>
+                    </ul>
+                    <button class="tariff-button">Выбрать</button>
+                </div>
+
+                <!-- Tariff 3: Week -->
+                <div class="tariff-card" data-tariff="week" data-price="500" data-duration="10080">
+                    <div class="tariff-badge">Максимум</div>
+                    <div class="tariff-icon">👑</div>
+                    <h3 class="tariff-name">Неделя</h3>
+                    <div class="tariff-price">
+                        <span class="price-amount">500</span>
+                        <span class="price-currency">сом</span>
+                    </div>
+                    <ul class="tariff-features">
+                        <li>✓ Безлимитный трафик</li>
+                        <li>✓ Скорость до 100 Мбит/с</li>
+                        <li>✓ Максимальный приоритет</li>
+                        <li>✓ QoS оптимизация</li>
+                    </ul>
+                    <button class="tariff-button">Выбрать</button>
+                </div>
+
+                <!-- Tariff 4: Custom -->
+                <div class="tariff-card custom-tariff" id="customTariffCard">
+                    <div class="tariff-badge" style="background: var(--gradient-cyber);">Свой тариф</div>
+                    <div class="tariff-icon">⚙️</div>
+                    <h3 class="tariff-name">Настроить</h3>
+
+                    <div class="custom-controls">
+                        <div class="custom-control">
+                            <label class="control-label">
+                                <span class="control-icon">⏱️</span>
+                                Время
+                            </label>
+                            <select class="custom-select" id="customDuration">
+                                <option value="30">30 минут</option>
+                                <option value="60" selected>1 час</option>
+                                <option value="120">2 часа</option>
+                                <option value="180">3 часа</option>
+                                <option value="360">6 часов</option>
+                                <option value="720">12 часов</option>
+                                <option value="1440">24 часа</option>
+                                <option value="2880">2 дня</option>
+                                <option value="4320">3 дня</option>
+                            </select>
+                        </div>
+
+                        <div class="custom-control">
+                            <label class="control-label">
+                                <span class="control-icon">🚀</span>
+                                Скорость
+                            </label>
+                            <select class="custom-select" id="customSpeed">
+                                <option value="10">10 Мбит/с</option>
+                                <option value="25">25 Мбит/с</option>
+                                <option value="50" selected>50 Мбит/с</option>
+                                <option value="75">75 Мбит/с</option>
+                                <option value="100">100 Мбит/с</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="tariff-price" id="customPrice">
+                        <span class="price-amount">50</span>
+                        <span class="price-currency">сом</span>
+                    </div>
+
+                    <ul class="tariff-features">
+                        <li>✓ Безлимитный трафик</li>
+                        <li>✓ Индивидуальные настройки</li>
+                        <li>✓ Динамическая цена</li>
+                    </ul>
+
+                    <button class="tariff-button" id="customTariffButton">Выбрать</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Payment Modal -->
+        <div class="modal" id="paymentModal">
+            <div class="modal-content">
+                <button class="modal-close" id="modalClose">&times;</button>
+
+                <div class="payment-header">
+                    <h2>Оплата доступа</h2>
+                    <div class="payment-summary">
+                        <span id="selectedTariffName">1 Час</span>
+                        <span class="payment-price">
+                            <strong id="selectedTariffPrice">50</strong> сом
+                        </span>
+                    </div>
+                </div>
+
+                <div class="payment-methods">
+                    <h3>Выберите способ оплаты</h3>
+
+                    <div class="payment-method active" data-method="card">
+                        <div class="method-icon">💳</div>
+                        <div class="method-info">
+                            <span class="method-name">Банковская карта</span>
+                            <span class="method-description">Visa, MasterCard, Элкарт</span>
+                        </div>
+                        <div class="method-check">✓</div>
+                    </div>
+
+                    <div class="payment-method" data-method="mbank">
+                        <div class="method-icon">🏦</div>
+                        <div class="method-info">
+                            <span class="method-name">MBank</span>
+                            <span class="method-description">Оплата через мобильный банкинг</span>
+                        </div>
+                        <div class="method-check">✓</div>
+                    </div>
+
+                    <div class="payment-method" data-method="odengi">
+                        <div class="method-icon">💰</div>
+                        <div class="method-info">
+                            <span class="method-name">O!Dengi</span>
+                            <span class="method-description">Электронный кошелек</span>
+                        </div>
+                        <div class="method-check">✓</div>
+                    </div>
+                </div>
+
+                <button class="pay-button" id="payButton">
+                    <span class="pay-button-text">Оплатить</span>
+                    <span class="pay-button-amount" id="payButtonAmount">50 сом</span>
+                </button>
+
+                <div class="payment-security">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 0L2 3V7C2 11 5 14 8 16C11 14 14 11 14 7V3L8 0Z" />
+                    </svg>
+                    <span>Защищенное соединение</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div class="modal" id="successModal">
+            <div class="modal-content success-content">
+                <div class="success-icon">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                        <circle cx="40" cy="40" r="36" fill="#10b981" opacity="0.2" />
+                        <circle cx="40" cy="40" r="30" fill="#10b981" />
+                        <path d="M25 40L35 50L55 30" stroke="white" stroke-width="4" fill="none"
+                            stroke-linecap="round" />
+                    </svg>
+                </div>
+                <h2>Оплата прошла успешно!</h2>
+                <p>Доступ к интернету активирован</p>
+
+                <div class="access-info">
+                    <div class="access-item">
+                        <span class="access-label">Тариф</span>
+                        <span class="access-value" id="successTariff">1 Час</span>
+                    </div>
+                    <div class="access-item">
+                        <span class="access-label">Действует до</span>
+                        <span class="access-value" id="successExpiry">--:--</span>
+                    </div>
+                </div>
+
+                <button class="success-button" onclick="redirectToLogin()">
+                    Начать пользоваться
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>При возникновении проблем свяжитесь с нами:</p>
+            <div class="footer-contacts">
+                <a href="tel:+996555123456">📞 +996 555 123 456</a>
+                <a href="https://t.me/sky_internet_support">💬 Telegram</a>
+            </div>
+            <p class="footer-copyright">© 2026 SKY Internet. Все права защищены.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+
+    <!-- Inline fix for custom tariff -->
+    <script>
+        console.log('=== INLINE SCRIPT START ===');
+
+        // Ждем полной загрузки
+        window.addEventListener('load', function () {
+            console.log('Window fully loaded, checking elements...');
+
+            const durationEl = document.getElementById('customDuration');
+            const speedEl = document.getElementById('customSpeed');
+            const priceEl = document.getElementById('customPrice');
+
+            console.log('Duration element:', durationEl);
+            console.log('Speed element:', speedEl);
+            console.log('Price element:', priceEl);
+
+            if (durationEl && speedEl && priceEl) {
+                console.log('✅ All elements found! Setting up listeners...');
+
+                function updatePriceNow() {
+                    const duration = parseInt(durationEl.value);
+                    const speed = parseInt(speedEl.value);
+
+                    console.log(`Calculating: ${duration} min @ ${speed} Mbps`);
+
+                    // Same logic as in script.js
+                    const baseTariffs = {
+                        hour: { minutes: 60, speed: 50, price: 50 },
+                        day: { minutes: 1440, speed: 100, price: 150 },
+                        week: { minutes: 10080, speed: 100, price: 500 }
+                    };
+
+                    const pricePerMinute = {
+                        hour: baseTariffs.hour.price / baseTariffs.hour.minutes,
+                        day: baseTariffs.day.price / baseTariffs.day.minutes,
+                        week: baseTariffs.week.price / baseTariffs.week.minutes
+                    };
+
+                    let baseRate;
+                    if (duration <= 60) {
+                        baseRate = pricePerMinute.hour;
+                    } else if (duration <= 1440) {
+                        baseRate = pricePerMinute.day;
+                    } else {
+                        baseRate = pricePerMinute.week;
+                    }
+
+                    let price = baseRate * duration;
+                    const speedMultiplier = speed / 50;
+                    price *= speedMultiplier;
+
+                    if (duration >= 4320) {
+                        price *= 0.7;
+                    } else if (duration >= 1440) {
+                        price *= 0.8;
+                    } else if (duration >= 360) {
+                        price *= 0.9;
+                    }
+
+                    price = Math.ceil(price / 5) * 5;
+                    price = Math.max(25, price);
+
+                    const priceAmount = priceEl.querySelector('.price-amount');
+                    if (priceAmount) {
+                        priceAmount.textContent = price;
+                        console.log(`✅ Price updated to: ${price} сом`);
+                    }
+                }
+
+                // Attach listeners
+                durationEl.addEventListener('change', function () {
+                    console.log('⏱️ Duration changed to:', this.value);
+                    updatePriceNow();
+                });
+
+                speedEl.addEventListener('change', function () {
+                    console.log('🚀 Speed changed to:', this.value);
+                    updatePriceNow();
+                });
+
+                // Initial update
+                updatePriceNow();
+                console.log('✅ Inline script setup complete!');
+            } else {
+                console.error('❌ Elements not found!');
+                console.error('Missing:',
+                    !durationEl ? 'customDuration' : '',
+                    !speedEl ? 'customSpeed' : '',
+                    !priceEl ? 'customPrice' : ''
+                );
+            }
+        });
+    </script>
+</body>
+
+</html>

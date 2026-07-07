@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Radius Admin</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+      th,
+      td {
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        text-align: left;
+      }
+      th {
+        background: #f4f4f4;
+      }
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+      input {
+        width: 100%;
+        padding: 0.5rem;
+        box-sizing: border-box;
+      }
+      button {
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+      }
+      .enabled-true {
+        color: green;
+        font-weight: bold;
+      }
+      .enabled-false {
+        color: red;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Radius User Management</h1>
+
+    <div style="background: #f9f9f9; padding: 1rem; border-radius: 5px">
+      <h3>Add New User</h3>
+      <form action="/add" method="post">
+        <div class="form-group">
+          <label>Username (Login or MAC)</label>
+          <input
+            type="text"
+            name="username"
+            required
+            placeholder="john or AA:BB:CC:DD:EE:FF"
+          />
+        </div>
+        <div class="form-group">
+          <label>Password (Leave empty for MAC-only)</label>
+          <input type="text" name="password" placeholder="secret123" />
+        </div>
+        <div class="form-group">
+          <label>MAC Address (Optional binding)</label>
+          <input type="text" name="mac" placeholder="AA:BB:CC:DD:EE:FF" />
+        </div>
+        <div class="form-group">
+          <label>Rate Limit (Optional, e.g., 5M/5M)</label>
+          <input type="text" name="rate_limit" placeholder="10M/10M" />
+        </div>
+        <button type="submit">Add User</button>
+      </form>
+    </div>
+
+    <h3>Existing Users</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Password</th>
+          <th>MAC Binding</th>
+          <th>Rate Limit</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td>{{ user.username }}</td>
+          <td>{{ user.password }}</td>
+          <td>{{ user.mac or '' }}</td>
+          <td>{{ user.rate_limit or '' }}</td>
+          <td class="enabled-{{ 'true' if user.enabled else 'false' }}">
+            {{ 'Active' if user.enabled else 'Disabled' }}
+          </td>
+          <td>
+            <form
+              action="/toggle/{{ user.username }}"
+              method="post"
+              style="display: inline"
+            >
+              <button type="submit">
+                {{ 'Disable' if user.enabled else 'Enable' }}
+              </button>
+            </form>
+            <form
+              action="/delete/{{ user.username }}"
+              method="post"
+              style="display: inline"
+            >
+              <button type="submit" style="background: #ffcccc">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

@@ -1,0 +1,42 @@
+server default {
+    listen {
+        type = auth
+        ipaddr = *
+        port = 1812
+    }
+    listen {
+        type = acct
+        ipaddr = *
+        port = 1813
+    }
+
+    authorize {
+        filter_username
+        preprocess
+        rewrite_called_station_id
+
+        # SQL ???? ????????, ????? RADIUS ?? ??????? ?? ??
+        #-sql
+
+        update control {
+            Auth-Type := Accept
+        }
+    }
+
+    authenticate {
+        Auth-Type Accept {
+            ok
+        }
+    }
+
+    accounting {
+        detail
+        #-sql
+    }
+
+    post-auth {
+        Post-Auth-Type REJECT {
+            attr_filter.access_reject
+        }
+    }
+}
